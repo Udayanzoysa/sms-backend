@@ -14,6 +14,7 @@ app.use(
     origin: "http://localhost:3000", // Replace with your React app's URL
     methods: "GET, POST, PUT, DELETE",
     allowedHeaders: "Content-Type, Authorization",
+    credentials: true,
   })
 );
 

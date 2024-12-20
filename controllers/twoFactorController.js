@@ -21,6 +21,7 @@ const verifyTwoFactor = async (req, res) => {
       parseInt(user.twoFactorSecret) === parseInt(otp.trim()) &&
       new Date() < new Date(user.twoFactorSecretExpire)
     ) {
+      const isProduction = process.env.NODE_ENV === "production";
       // Mark user as verified
       user.twoFactorSecret = null; // Clear OTP
       user.twoFactorSecretExpire = null;
@@ -31,9 +32,25 @@ const verifyTwoFactor = async (req, res) => {
       const accessToken = generateAccessToken(user._id);
       const refreshToken = generateRefreshToken(user._id);
 
+      res.cookie("accessToken", accessToken, {
+        httpOnly: false,
+        secure: false,
+        sameSite: "Lax",
+        path: "/",
+        // secure: isProduction,
+        // sameSite: isProduction ? "Strict" : "Lax",
+      });
+
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: false,
+        secure: false,
+        sameSite: "Lax",
+        path: "/",
+        // secure: isProduction,
+        // sameSite: isProduction ? "Strict" : "Lax",
+      });
+
       return res.status(200).json({
-        accessToken,
-        refreshToken,
         message: "OTP verified successfully",
       });
     }
