@@ -2,9 +2,11 @@ const express = require("express");
 const app = express();
 const dotenv = require("dotenv");
 dotenv.config();
+const cookieParser = require("cookie-parser");
 
 const authRoutes = require("./routes/authRoutes");
 const twoFactorRoutes = require("./routes/twoFactorRoutes");
+const tokenRoutes = require("./routes/tokenRoutes");
 
 app.use(express.json());
 
@@ -18,8 +20,12 @@ app.use(
   })
 );
 
+app.use(cookieParser());
+
+
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/2fa", twoFactorRoutes);
+app.use("/api", tokenRoutes);
 
 module.exports = app;
