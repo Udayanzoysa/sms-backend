@@ -1,6 +1,6 @@
 const speakeasy = require("speakeasy");
 const User = require("../models/user");
-const emailService = require("../services/emailService");
+const { sendEmail } = require("../services/emailService");
 const { generateOTP } = require("../utils/verify2FAToken");
 const {
   generateAccessToken,
@@ -50,6 +50,12 @@ const verifyTwoFactor = async (req, res) => {
         // sameSite: isProduction ? "Strict" : "Lax",
       });
 
+      sendEmail(
+        "unzoysa.un@gmail.com",
+        "Hello from Zoho SMTP",
+        "This is a test email!"
+      );
+
       return res.status(200).json({
         message: "OTP verified successfully",
       });
@@ -79,6 +85,23 @@ const resendOtp = async (req, res) => {
     user.twoFactorSecret = otp;
     user.twoFactorSecretExpire = otpExpire;
     await user.save();
+
+    sendEmail(
+      email,
+      "Your OTP Code for SMS App",
+      `Hi there,
+
+      Thank you for using our SMS App!
+
+      Here is your One-Time Password (OTP) to complete the login process: **${otp}**
+
+      Please note: This code is valid for the next 15 minutes. Do not share it with anyone.
+
+      If you didn’t request this, please contact our support team immediately.
+
+      Best regards,
+      The SMS App Team`
+    );
 
     res.status(200).json({ message: "OTP sent successfully" });
   } catch (error) {

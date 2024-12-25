@@ -1,12 +1,13 @@
+require("dotenv").config();
 const nodemailer = require("nodemailer");
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.zeptomail.com",
-  port: 587,
-  secure: false, // upgrade later with STARTTLS
+  host: "smtp.zoho.com",
+  port: 465,
+  secure: true,
   auth: {
-    user: "emailapikey",
-    pass: "wSsVR60i/hfwXal9mTf+L+ppmwkBVFz/Ekx42wOp6SL+TazHpsczxE3PU1ShHPNNFmI7EDBBpugtnRYB0ztdidorylFRWSiF9mqRe1U4J3x17qnvhDzNXGpbmheBLI0Kzw9vmWNnFcsm+g==",
+    user: process.env.ZOHO_EMAIL,
+    pass: process.env.ZOHO_PASSWORD,
   },
 });
 
