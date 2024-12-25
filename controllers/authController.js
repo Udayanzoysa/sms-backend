@@ -108,26 +108,42 @@ const verifyUser = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
+    const roles = user.role
+      ? Array.isArray(user.role)
+        ? user.role
+        : [user.role]
+      : [];
+
     return res.status(200).json({
       message: "User verified successfully",
       user: {
         id: user._id,
         first_name: user.first_name,
         last_name: user.last_name,
-        name: user.first_name + " " + user.last_name,
+        name: `${user.first_name} ${user.last_name}`,
         email: user.email,
-        role: user.role,
+        roles,
       },
     });
   } catch (error) {
     console.error(error);
+
     if (error.name === "TokenExpiredError") {
       return res.status(401).json({ message: "Access token expired" });
     }
 
-    return res
-      .status(401)
-      .json({ message: "Invalid access token", user: { role: "Guest" } });
+    const roles = []; // Fallback for guest response
+    return res.status(401).json({
+      message: "Invalid access token",
+      user: {
+        id: "Guest",
+        first_name: null,
+        last_name: null,
+        name: null,
+        email: null,
+        roles,
+      },
+    });
   }
 };
 

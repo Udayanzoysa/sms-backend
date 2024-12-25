@@ -95,16 +95,13 @@ const userSchema = new mongoose.Schema({
   },
   isTwoFactorEnabled: {
     type: Boolean,
-    default: true,
   },
   twoFactorSecret: {
     type: String,
-    unique: true,
   },
   twoFactorSecretExpire: { type: Date },
   isVerified: {
     type: Boolean,
-    default: false,
   },
 });
 
