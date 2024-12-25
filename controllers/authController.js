@@ -19,17 +19,14 @@ const register = async (req, res) => {
       return res.status(400).json({ message: "All fields are required." });
     }
 
-    // Check if password and confirm_password match
     if (password !== confirm_password) {
       return res.status(400).json({ message: "Passwords do not match." });
     }
 
-    // Remove the leading '0' from the phone number if it exists
     if (phone.startsWith("0")) {
       phone = phone.slice(1);
     }
 
-    // Validate phone number (9 digits after removing the leading 0)
     const phoneRegex = /^[0-9]{9}$/;
     if (!phoneRegex.test(phone)) {
       return res.status(400).json({
@@ -37,27 +34,21 @@ const register = async (req, res) => {
       });
     }
 
-    // Prepend the country code (e.g., +94 for Sri Lanka)
     const formattedPhone = `+94${phone}`;
 
-    // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: "User already exists." });
     }
 
-    // Hash the password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Generate a unique API key
     const apiKey = require("crypto").randomBytes(20).toString("hex");
 
-    // Generate OTP
     const otp = generateOTP();
     const otpExpire = new Date(Date.now() + 5 * 60 * 1000);
 
-    // Create a new user
     const newUser = new User({
       first_name,
       last_name,
@@ -79,8 +70,6 @@ const register = async (req, res) => {
     res.status(500).json({ message: "Server error." });
   }
 };
-
-module.exports = register;
 
 const login = async (req, res) => {
   const { email, password } = req.body;
@@ -106,4 +95,40 @@ const login = async (req, res) => {
   });
 };
 
-module.exports = { register, login };
+const verifyUser = async (req, res) => {
+  const { accessToken } = req.body;
+  try {
+    if (!accessToken) {
+      return res.status(401).json({ message: "Access token is required" });
+    }
+
+    const decoded = jwt.verify(accessToken, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    return res.status(200).json({
+      message: "User verified successfully",
+      user: {
+        id: user._id,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        name: user.first_name + " " + user.last_name,
+        email: user.email,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    if (error.name === "TokenExpiredError") {
+      return res.status(401).json({ message: "Access token expired" });
+    }
+
+    return res
+      .status(401)
+      .json({ message: "Invalid access token", user: { role: "Guest" } });
+  }
+};
+
+module.exports = { register, login, verifyUser };

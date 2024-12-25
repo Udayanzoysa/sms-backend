@@ -2,6 +2,7 @@ const speakeasy = require("speakeasy");
 const User = require("../models/user");
 const emailService = require("../services/emailService");
 const { generateOTP } = require("../utils/verify2FAToken");
+const jwt = require("jsonwebtoken");
 const {
   generateAccessToken,
   generateRefreshToken,
@@ -9,6 +10,7 @@ const {
 
 const refreshToken = async (req, res) => {
   const refreshToken = req.cookies.refreshToken;
+  console.log(refreshToken);
   if (!refreshToken) {
     return res.status(403).json({ message: "Refresh token missing" });
   }

@@ -28,4 +28,9 @@ app.use("/api/auth", authRoutes);
 app.use("/api/2fa", twoFactorRoutes);
 app.use("/api", tokenRoutes);
 
+// Simple GET route that returns a message
+app.get('/hi/world', (req, res) => {
+  res.send('Hello, World! It\'s working!');
+});
+
 module.exports = app;
