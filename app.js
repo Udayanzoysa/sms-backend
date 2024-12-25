@@ -14,7 +14,7 @@ app.use(express.json());
 const cors = require("cors");
 app.use(
   cors({
-    origin: "http://localhost:3000", // Replace with your React app's URL
+    origin: ["http://localhost:3000", "https://sms-app-portal.vercel.app"], // Replace with your React app's URLs
     methods: "GET, POST, PUT, DELETE",
     allowedHeaders: "Content-Type, Authorization",
     credentials: true,
