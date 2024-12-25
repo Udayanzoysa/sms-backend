@@ -6,10 +6,10 @@ const sendEmail = async (to, subject, text) => {
   try {
     // Email options
     const mailOptions = {
-      from: process.env.SMTP_FROM,
+      from: `"SMS App" <${process.env.SENDER_EMAIL}>`,
       to: to,
       subject: subject,
-      text: text,
+      html: text,
     };
 
     // Send the email

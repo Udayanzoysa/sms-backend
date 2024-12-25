@@ -2,6 +2,8 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const { generateOTP } = require("../utils/verify2FAToken");
+const { sendEmail } = require("../services/emailService");
+const { loginOtpTemplate } = require("../services/emailTemplates");
 
 const register = async (req, res) => {
   try {
@@ -87,6 +89,8 @@ const login = async (req, res) => {
   user.twoFactorSecret = otp;
   user.twoFactorSecretExpire = otpExpire;
   user.isVerified = false;
+
+  await sendEmail(user.email, "Login OTP Code", loginOtpTemplate(otp));
   await user.save();
   res.status(201).json({
     message:
