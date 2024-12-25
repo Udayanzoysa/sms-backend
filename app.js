@@ -7,6 +7,7 @@ const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/authRoutes");
 const twoFactorRoutes = require("./routes/twoFactorRoutes");
 const tokenRoutes = require("./routes/tokenRoutes");
+const userRoutes = require("./routes/userRoutes");
 
 app.use(express.json());
 
@@ -22,15 +23,15 @@ app.use(
 
 app.use(cookieParser());
 
-
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/2fa", twoFactorRoutes);
 app.use("/api", tokenRoutes);
+app.use("/api", userRoutes);
 
 // Simple GET route that returns a message
-app.get('/hi/world', (req, res) => {
-  res.send('Hello, World! It\'s working!');
+app.get("/hi/world", (req, res) => {
+  res.send("Hello, World! It's working!");
 });
 
 module.exports = app;

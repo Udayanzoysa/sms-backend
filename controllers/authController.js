@@ -96,7 +96,7 @@ const login = async (req, res) => {
 };
 
 const verifyUser = async (req, res) => {
-  const { accessToken } = req.body;
+  const accessToken = req.cookies["accessToken"];
   try {
     if (!accessToken) {
       return res.status(401).json({ message: "Access token is required" });
